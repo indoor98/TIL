@@ -1,4 +1,4 @@
-package com.thisisjava;
+package ch02.sec01;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
