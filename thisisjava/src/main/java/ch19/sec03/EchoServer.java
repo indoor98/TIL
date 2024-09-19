@@ -101,7 +101,6 @@ public class EchoServer {
             serverSocket.close();
             System.out.println("[서버] 종료됨");
         } catch (IOException e1) {
-
         }
     }
 
