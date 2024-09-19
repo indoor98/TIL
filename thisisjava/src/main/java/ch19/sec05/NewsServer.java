@@ -1,12 +1,15 @@
-package ch19.sec04;
+package ch19.sec05;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketAddress;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class NewsServer {
     private static DatagramSocket datagramSocket = null;
+    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     public static void main(String[] args) {
         System.out.println("------------------------------------------------");
@@ -42,18 +45,25 @@ public class NewsServer {
                     //클라이언트가 구독하고 싶은 뉴스 주제 얻기
                     DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
                     datagramSocket.receive(receivePacket);
-                    String newsKind = new String(receivePacket.getData(), 0, receivePacket.getLength(), "UTF-8");
 
-                    //클라이언트의 IP & Port 얻기
-                    SocketAddress socketAddress = receivePacket.getSocketAddress();
+                    executorService.execute(() -> {
+                        try {
+                            String newsKind = new String(receivePacket.getData(), 0, receivePacket.getLength(), "UTF-8");
 
-                    //10개의 뉴스를 클라이언트로 전송
-                    for (int i = 0; i < 10; i++) {
-                        String data = newsKind + ": 뉴스" + i;
-                        byte[] bytes = data.getBytes("UTF-8");
-                        DatagramPacket sendPacket = new DatagramPacket(bytes, 0, bytes.length, socketAddress);
-                        datagramSocket.send(sendPacket);
-                    }
+                            //클라이언트의 IP & Port 얻기
+                            SocketAddress socketAddress = receivePacket.getSocketAddress();
+
+                            //10개의 뉴스를 클라이언트로 전송
+                            for (int i = 0; i < 10; i++) {
+                                String data = newsKind + ": 뉴스" + i;
+                                byte[] bytes = data.getBytes("UTF-8");
+                                DatagramPacket sendPacket = new DatagramPacket(bytes, 0, bytes.length, socketAddress);
+                                datagramSocket.send(sendPacket);
+                            }
+                        } catch (Exception e) {
+                        }
+                    });
+
                 }
             } catch (Exception e) {
                 System.out.println("[서버] " + e.getMessage());
@@ -67,6 +77,7 @@ public class NewsServer {
     public static void stopServer() {
         //DatagramSocket을 닫고 Port 언바인딩
         datagramSocket.close();
+        executorService.shutdownNow();
         System.out.println("[서버] 종료됨 ");
     }
 }
