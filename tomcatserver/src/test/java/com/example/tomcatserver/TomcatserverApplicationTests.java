@@ -1,0 +1,13 @@
+package com.example.tomcatserver;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class TomcatserverApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}

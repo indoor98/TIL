@@ -1,0 +1,12 @@
+server:
+  tomcat:
+    max-connections: 5
+    accept-count: 3
+    threads:
+      max: 5
+      min-spare: 5
+
+
+logging:
+  level:
+    root: info
