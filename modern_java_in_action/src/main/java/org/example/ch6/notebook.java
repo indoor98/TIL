@@ -20,7 +20,7 @@ public class notebook {
 
         Optional<Dish> mostCalorieDish = menu.stream().collect(Collectors.maxBy(dishCaloriesComparator));
 
-        System.out.println( mostCalorieDish.orElse(null));
+        System.out.println(mostCalorieDish.orElse(null));
 
         // 6.2.2 요약 연산
         int totalCalories = menu.stream().collect(Collectors.summingInt(Dish::getCalories));
@@ -62,6 +62,30 @@ public class notebook {
         // 6.3 그룹화
         Map<Dish.Type, List<Dish>> dishesByType = menu.stream().collect(Collectors.groupingBy(Dish::getType));
         System.out.println(dishesByType);
+
+        // 6.3.1
+        Map<CaloricLevel, List<Dish>> dishesByCaloricLevel = menu.stream().collect(
+                Collectors.groupingBy(dish -> {
+                    if (dish.getCalories() <= 400) {
+                        return CaloricLevel.DIET;
+                    } else if (dish.getCalories() <= 700){
+                        return CaloricLevel.NORMAL;
+                    } else {
+                        return CaloricLevel.FAT;
+                    }
+                })
+        );
+        System.out.println(dishesByCaloricLevel);
+
+        Map<Dish.Type, List<Dish>> caloricDishesByType = menu.stream().collect(
+                Collectors.groupingBy(Dish::getType,
+                        Collectors.filtering(dish -> dish.getCalories() > 500, Collectors.toList()))
+        );
+        System.out.println(caloricDishesByType);
+
+
+
+
 
 
     }
